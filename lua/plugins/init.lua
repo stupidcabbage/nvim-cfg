@@ -15,5 +15,5 @@ return {
   require 'plugins.todo',
   require 'plugins.whichkey',
   require 'plugins.mininvim',
-  require 'plugins.wakatime',
+  require 'plugins.dbviewer',
 }

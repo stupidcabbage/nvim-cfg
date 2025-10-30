@@ -130,6 +130,7 @@ return {
       },
       gopls = {},
       pyright = {},
+      autoflake = {},
       -- ts_ls = {},
 
       lua_ls = {
