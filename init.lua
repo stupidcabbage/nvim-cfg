@@ -6,6 +6,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 vim.g.have_nerd_font = true -- On nerd font
+vim.opt.swapfile = false
 vim.o.number = true
 vim.o.mouse = 'a'
 vim.o.showmode = false

@@ -8,8 +8,6 @@ return { -- Fuzzy Finder (files, lsp, etc)
 
       build = 'make',
 
-      -- `cond` is a condition used to determine whether this plugin should be
-      -- installed and loaded.
       cond = function()
         return vim.fn.executable 'make' == 1
       end,
@@ -20,15 +18,6 @@ return { -- Fuzzy Finder (files, lsp, etc)
   },
   config = function()
     require('telescope').setup {
-      -- You can put your default mappings / updates / etc. in here
-      --  All the info you're looking for is in `:help telescope.setup()`
-      --
-      -- defaults = {
-      --   mappings = {
-      --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-      --   },
-      -- },
-      -- pickers = {}
       extensions = {
         ['ui-select'] = {
           require('telescope.themes').get_dropdown(),
@@ -36,11 +25,9 @@ return { -- Fuzzy Finder (files, lsp, etc)
       },
     }
 
-    -- Enable Telescope extensions if they are installed
     pcall(require('telescope').load_extension, 'fzf')
     pcall(require('telescope').load_extension, 'ui-select')
 
-    -- See `:help telescope.builtin`
     local builtin = require 'telescope.builtin'
     vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
     vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
