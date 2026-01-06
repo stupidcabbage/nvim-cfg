@@ -127,3 +127,10 @@ vim.api.nvim_create_autocmd('BufWritePre', {
     vim.cmd 'silent! !clang-format -i %'
   end,
 })
+
+vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
+  pattern = { '*/templates/*.yaml', '*/templates/*.tpl', '*/templates/_*.yaml' },
+  callback = function()
+    vim.bo.filetype = 'helm'
+  end,
+})

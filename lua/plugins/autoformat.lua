@@ -14,11 +14,12 @@ return {
   },
   opts = {
     notify_on_error = false,
+
+    -- Автоформат при сохранении
     format_on_save = function(bufnr)
-      -- Disable "format_on_save lsp_fallback" for languages that don't
-      -- have a well standardized coding style. You can add additional
-      -- languages here or re-enable it for the disabled ones.
+      -- Отключаем автоформат для C/C++ (можно добавить другие языки)
       local disable_filetypes = { c = true, cpp = true }
+
       if disable_filetypes[vim.bo[bufnr].filetype] then
         return nil
       else
@@ -28,14 +29,29 @@ return {
         }
       end
     end,
+
     formatters_by_ft = {
       lua = { 'stylua' },
       cpp = { 'clang-format' },
-      python = { 'isort', 'ruff' },
-      yaml = { 'yaml' },
-      --
-      -- You can use 'stop_after_first' to run the first available formatter from the list
-      -- javascript = { "prettierd", "prettier", stop_after_first = true },
+      python = { 'ruff_format', 'ruff_organize_imports' },
+      yaml = { 'prettier' },
+      sql = { 'sql_formatter' },
+      go = { 'gofmt', 'goimports' },
+
+      javascript = { 'prettier', stop_after_first = true },
+      typescript = { 'prettier', stop_after_first = true },
+    },
+
+    -- Дополнительная настройка для ruff
+    formatters = {
+      ruff_format = {
+        command = 'ruff',
+        args = { 'format', '--force-exclude', '--stdin-filename', '$FILENAME', '-' },
+      },
+      ruff_organize_imports = {
+        command = 'ruff',
+        args = { 'check', '--select', 'I', '--fix', '--force-exclude', '--stdin-filename', '$FILENAME', '-' },
+      },
     },
   },
 }
