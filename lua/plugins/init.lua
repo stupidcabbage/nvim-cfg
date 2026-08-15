@@ -8,6 +8,7 @@ return {
   require 'plugins.telescope',
   require 'plugins.autocomplete',
   require 'plugins.colorscheme',
+  require 'plugins.statusline',
   require 'plugins.neo-tree',
   require 'plugins.treesitter',
   require 'plugins.gitsigns',
