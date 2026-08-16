@@ -70,8 +70,8 @@ return {
       local message = diagnostic.message:gsub('\n', ' ')
       local max_length = 80
 
-      if #message > max_length then
-        return message:sub(1, max_length - 1) .. '…'
+      if vim.fn.strchars(message) > max_length then
+        return vim.fn.strcharpart(message, 0, max_length - 1) .. '…'
       end
 
       return message
