@@ -66,7 +66,17 @@ return {
       end,
     })
 
-    -- Диагностика остается БЕЗ ИЗМЕНЕНИЙ
+    local function inline_diagnostic_message(diagnostic)
+      local message = diagnostic.message:gsub('\n', ' ')
+      local max_length = 80
+
+      if #message > max_length then
+        return message:sub(1, max_length - 1) .. '…'
+      end
+
+      return message
+    end
+
     vim.diagnostic.config {
       severity_sort = true,
       float = { border = 'rounded', source = 'if_many' },
@@ -82,15 +92,7 @@ return {
       virtual_text = {
         source = 'if_many',
         spacing = 2,
-        format = function(diagnostic)
-          local diagnostic_message = {
-            [vim.diagnostic.severity.ERROR] = diagnostic.message,
-            [vim.diagnostic.severity.WARN] = diagnostic.message,
-            [vim.diagnostic.severity.INFO] = diagnostic.message,
-            [vim.diagnostic.severity.HINT] = diagnostic.message,
-          }
-          return diagnostic_message[diagnostic.severity]
-        end,
+        format = inline_diagnostic_message,
       },
     }
 
@@ -109,7 +111,7 @@ return {
       },
       gopls = {},
       pyright = {},
-      -- autoflake = {}, -- УБРАЛ - это не LSP, а линтер
+      ruff = {},
 
       -- ДОБАВИЛ для YAML/K8s
       yamlls = {
@@ -155,7 +157,7 @@ return {
     local ensure_installed = vim.tbl_keys(servers or {})
     vim.list_extend(ensure_installed, {
       'stylua', -- Lua formatter
-      'autoflake', -- Python линтер (переместил сюда из servers)
+      'ruff',
     })
 
     require('mason-tool-installer').setup { ensure_installed = ensure_installed }
