@@ -9,6 +9,7 @@ return {
   require 'plugins.autocomplete',
   require 'plugins.colorscheme',
   require 'plugins.statusline',
+  require 'plugins.trouble',
   require 'plugins.neo-tree',
   require 'plugins.treesitter',
   require 'plugins.gitsigns',
