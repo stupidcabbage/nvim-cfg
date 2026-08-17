@@ -16,8 +16,6 @@ return {
   require 'plugins.autoformat',
   require 'plugins.todo',
   require 'plugins.whichkey',
-  require 'plugins.mininvim',
-  require 'plugins.helm',
   require 'plugins.dashboard',
   require 'plugins.autopairs',
 }

@@ -17,8 +17,11 @@ return {
 
     -- Автоформат при сохранении
     format_on_save = function(bufnr)
-      -- Отключаем автоформат для C/C++ (можно добавить другие языки)
-      local disable_filetypes = { c = true, cpp = true }
+      -- Отключаем автоформат для C/C++
+      local disable_filetypes = {
+        c = true,
+        cpp = true,
+      }
 
       if disable_filetypes[vim.bo[bufnr].filetype] then
         return nil
@@ -40,17 +43,67 @@ return {
 
       javascript = { 'prettier', stop_after_first = true },
       typescript = { 'prettier', stop_after_first = true },
+
+      -- ===== Java =====
+      java = {
+        'spotless_maven',
+        'spotless_gradle',
+        'google_java_format',
+      },
     },
 
-    -- Дополнительная настройка для ruff
     formatters = {
+      -- ===== Python =====
       ruff_format = {
         command = 'ruff',
-        args = { 'format', '--force-exclude', '--stdin-filename', '$FILENAME', '-' },
+        args = {
+          'format',
+          '--force-exclude',
+          '--stdin-filename',
+          '$FILENAME',
+          '-',
+        },
       },
+
       ruff_organize_imports = {
         command = 'ruff',
-        args = { 'check', '--select', 'I', '--fix', '--force-exclude', '--stdin-filename', '$FILENAME', '-' },
+        args = {
+          'check',
+          '--select',
+          'I',
+          '--fix',
+          '--force-exclude',
+          '--stdin-filename',
+          '$FILENAME',
+          '-',
+        },
+      },
+
+      -- ===== Java: Spotless (Maven) =====
+      spotless_maven = {
+        command = 'mvn',
+        args = {
+          '-q',
+          '-DskipTests',
+          'spotless:apply',
+        },
+        stdin = false,
+      },
+
+      -- ===== Java: Spotless (Gradle) =====
+      spotless_gradle = {
+        command = './gradlew',
+        args = {
+          'spotlessApply',
+        },
+        stdin = false,
+      },
+
+      -- ===== Java: Google Java Format =====
+      google_java_format = {
+        command = 'google-java-format',
+        args = { '--aosp', '-' },
+        stdin = true,
       },
     },
   },
