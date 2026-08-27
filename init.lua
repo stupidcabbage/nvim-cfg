@@ -5,6 +5,10 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- No installed plugin uses the Python remote provider, and pynvim is not installed.
+-- Disable provider discovery; Python LSP, Treesitter and formatters do not depend on it.
+vim.g.loaded_python3_provider = 0
+
 vim.g.have_nerd_font = true -- On nerd font
 vim.opt.swapfile = false
 vim.o.number = true

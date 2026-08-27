@@ -1,5 +1,6 @@
 return {
   'neovim/nvim-lspconfig',
+  event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {
     { 'mason-org/mason.nvim', opts = {} },
     'mason-org/mason-lspconfig.nvim',
@@ -20,13 +21,25 @@ return {
         map('<C-k>', vim.lsp.buf.signature_help, 'Signature Help') -- показывает сигнатуру функции при вводе параметров
         map('grn', vim.lsp.buf.rename, '[R]e[n]ame')
         map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
-        map('grr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-        map('gri', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-        map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+        map('grr', function()
+          require('telescope.builtin').lsp_references()
+        end, '[G]oto [R]eferences')
+        map('gri', function()
+          require('telescope.builtin').lsp_implementations()
+        end, '[G]oto [I]mplementation')
+        map('grd', function()
+          require('telescope.builtin').lsp_definitions()
+        end, '[G]oto [D]efinition')
         map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-        map('gO', require('telescope.builtin').lsp_document_symbols, 'Open Document Symbols')
-        map('gW', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Open Workspace Symbols')
-        map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
+        map('gO', function()
+          require('telescope.builtin').lsp_document_symbols()
+        end, 'Open Document Symbols')
+        map('gW', function()
+          require('telescope.builtin').lsp_dynamic_workspace_symbols()
+        end, 'Open Workspace Symbols')
+        map('grt', function()
+          require('telescope.builtin').lsp_type_definitions()
+        end, '[G]oto [T]ype Definition')
 
         local function client_supports_method(client, method, bufnr)
           if vim.fn.has 'nvim-0.11' == 1 then
@@ -37,6 +50,11 @@ return {
         end
 
         local client = vim.lsp.get_client_by_id(event.data.client_id)
+        if client and client.name == 'ruff' then
+          -- Pyright provides richer hover information; keep Ruff focused on linting and code actions.
+          client.server_capabilities.hoverProvider = false
+        end
+
         if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
           local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
           vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
@@ -110,8 +128,22 @@ return {
         },
       },
       gopls = {},
-      pyright = {},
-      ruff = {},
+      pyright = {
+        settings = {
+          pyright = {
+            -- Ruff already owns the organize-imports code action.
+            disableOrganizeImports = true,
+          },
+        },
+      },
+      ruff = {
+        init_options = {
+          settings = {
+            -- Avoid routine startup messages in the Neovim LSP log.
+            logLevel = 'warn',
+          },
+        },
+      },
 
       -- ДОБАВИЛ для YAML/K8s
       yamlls = {
@@ -154,24 +186,24 @@ return {
       },
     }
 
-    local ensure_installed = vim.tbl_keys(servers or {})
+    local server_names = vim.tbl_keys(servers)
+    local ensure_installed = vim.deepcopy(server_names)
     vim.list_extend(ensure_installed, {
       'stylua', -- Lua formatter
-      'ruff',
     })
 
     require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+    for server_name, server in pairs(servers) do
+      server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+      vim.lsp.config(server_name, server)
+    end
+
     require('mason-lspconfig').setup {
       ensure_installed = {},
-      automatic_installation = false,
-      handlers = {
-        function(server_name)
-          local server = servers[server_name] or {}
-          server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-          require('lspconfig')[server_name].setup(server)
-        end,
-      },
+      automatic_enable = false,
     }
+
+    vim.lsp.enable(server_names)
   end,
 }

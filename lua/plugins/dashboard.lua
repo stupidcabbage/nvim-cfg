@@ -1,6 +1,9 @@
 return {
   'nvimdev/dashboard-nvim',
   event = 'VimEnter',
+  cond = function()
+    return vim.fn.argc(-1) == 0
+  end,
   config = function()
     require('dashboard').setup {
       theme = 'doom',

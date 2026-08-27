@@ -1,6 +1,11 @@
 return {
   'akinsho/toggleterm.nvim',
   version = '*',
+  cmd = 'ToggleTerm',
+  keys = {
+    { '<leader>tn', '<cmd>ToggleTerm<cr>', desc = '[T]erminal [N]ew' },
+    { '<leader>tv', '<C-\\><C-n>vh', mode = 't', desc = '[T]erminal [V]isual mode' },
+  },
   config = function()
     require('toggleterm').setup {
       size = 20,
@@ -17,11 +22,5 @@ return {
       -- Убираем дефолтные маппинги, чтобы не мешали
       keymaps = {},
     }
-
-    -- Маппинг: <leader>tn — создать новый терминал
-    vim.api.nvim_set_keymap('n', '<leader>tn', '<cmd>ToggleTerm<cr>', { noremap = true, silent = true })
-
-    -- Маппинг в терминальном режиме: <leader>tv — выйти и перейти в визуальный режим
-    vim.api.nvim_set_keymap('t', '<leader>tv', '<C-\\><C-n>vh', { noremap = true, silent = true })
   end,
 }
